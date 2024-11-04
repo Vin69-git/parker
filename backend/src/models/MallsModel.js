@@ -1,4 +1,4 @@
-import { pool } from "../db/db.js";
+import  pool  from "../db/db.js";
 
 const MallsModel = {
     async createMallsTable() {
@@ -14,6 +14,20 @@ const MallsModel = {
             await pool.query(query);
             console.log("Malls Table created successfully or already exists");
         } catch (error) {
+            throw error;
+        }
+    },
+
+    async getAllMalls() {
+        const query = `
+        SELECT * FROM malls;
+        `;
+
+        try {
+            const result = await pool.query(query);
+            return result.rows;
+        }
+        catch (error) {
             throw error;
         }
     }

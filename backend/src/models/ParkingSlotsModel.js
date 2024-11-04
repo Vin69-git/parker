@@ -1,4 +1,4 @@
-import { pool } from "../db/db.js";
+import  pool  from "../db/db.js";
 
 const ParkingSlotsModel = {
     async createParkingSlotsTable() {
@@ -20,13 +20,13 @@ const ParkingSlotsModel = {
         }
     },
 
-    async getAllParkingSlots() {
+    async getAllParkingSlots(id) {
         const query = `
-        SELECT id, level FROM parking_slots WHERE status = 'available';
+        SELECT id, level FROM parking_slots WHERE status = 'available' AND mall_id = $1;
         `;
 
         try {
-            const result = await pool.query(query);
+            const result = await pool.query(query, [id]);
             return result.rows;
         }
         catch (error) {

@@ -1,7 +1,7 @@
 import express from 'express';
 import { configDotenv } from 'dotenv';
 import UserModel from './models/UserModel.js';
-import { pool } from './db/db.js';
+import pool  from './db/db.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
@@ -122,10 +122,22 @@ app.post('/register', async (req, res) => {
     }
 });
 
-//Check available slots
-app.get('/available-slots', authenticateToken,  async(req, res) => {
+
+//Get Malls
+app.get('/malls', authenticateToken, async(req, res) => {
     try {
-        const available_slots = await ParkingSlotsModel.getAllParkingSlots();
+        const all_malls = await MallsModel.getAllMalls();
+        res.status(200).send(all_malls);
+    } catch (error) {
+        res.status(400).send("Error while fetching all malls: " + error);
+    }
+})
+
+//Check available slots
+app.get('/available-slots/:mall_id', authenticateToken,  async(req, res) => {
+    const {mall_id} = req.params;
+    try {
+        const available_slots = await ParkingSlotsModel.getAllParkingSlots(mall_id);
         res.status(200).send(available_slots);
     } catch (error) {
         res.status(400).send("Error while fetching available slots: " + error);
@@ -136,10 +148,34 @@ app.get('/available-slots', authenticateToken,  async(req, res) => {
 app.post('/book-slot', authenticateToken, async(req, res) => {
     const {user_id, vehicle_number, slot_id} = req.body;
     try {
-        await SlotBookingsModel.bookSlot(user_id, slot_id);
-        res.status(200).send("Slot Booked Successfully");
+        const slot_details = await SlotBookingsModel.createSlotBooking(vehicle_number,user_id, slot_id);
+        res.status(200).send(slot_details);
     } catch (error) {
         res.status(400).send("Error while booking slot: " + error);
+    }
+})
+
+//Get Booked Slots
+app.get('/booking-details/:id', authenticateToken, async(req, res) => {
+    const {id} = req.params;
+    try {
+        const booking_details = await SlotBookingsModel.getSlotBookings(id);
+        console.log(booking_details);
+        res.status(200).send(booking_details);
+    } catch (error) {
+        res.status(400).send("Error while fetching booking details: " + error);
+    }
+}
+)
+
+//Exit Parking
+app.delete('/unbook-slot', authenticateToken, async(req, res) => {
+    const {id} = req.body;
+    try {
+        await SlotBookingsModel.deleteSlotBooking(id);
+        res.status(200).send("Slot Delete Successfully")
+    } catch (error) {
+        res.status(400).send("Error while unbooking slot: " + error);
     }
 })
 
