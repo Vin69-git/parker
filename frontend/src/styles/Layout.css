@@ -1,0 +1,40 @@
+/* src/styles/Layout.css */
+.mall-button {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .mall-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* src/styles/Layout.css */
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  gap: 10px;
+}
+
+.slot {
+  padding: 1rem;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.slot.occupied {
+  background-color: #d9534f;
+  cursor: not-allowed;
+}
